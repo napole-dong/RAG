@@ -10,8 +10,10 @@ dependencies = [
     "inngest>=0.5.9",
     "llama-index-core>=0.14.3",
     "llama-index-readers-file>=0.5.4",
+    "pypdf>=6.1.1",
     "python-dotenv>=1.1.1",
     "qdrant-client>=1.15.1",
+    "sentence-transformers>=5.1.1",
     "streamlit>=1.50.0",
     "uvicorn>=0.37.0",
 ]
