@@ -56,6 +56,40 @@ uvicorn main:app --reload
 # Hoặc theo hướng dẫn trong main.py nếu dùng Inngest integration
 ```
 
+5) Ingest PDF bằng HTTP endpoint (mới)
+
+Sau khi app chạy (docker compose up hoặc uvicorn), bạn có thể gửi request POST tới `/ingest`:
+
+Curl (Git Bash / Linux / macOS):
+
+```bash
+curl -X POST http://localhost:8000/ingest \
+	-H "Content-Type: application/json" \
+	-d '{"pdf_path":"/app/test.pdf","source_id":"my-doc"}'
+```
+
+PowerShell:
+
+```powershell
+Invoke-RestMethod -Uri http://localhost:8000/ingest -Method Post -Body (@{pdf_path="C:\\path\\to\\test.pdf"; source_id="my-doc"} | ConvertTo-Json) -ContentType "application/json"
+```
+
+Lưu ý: nếu bạn chạy app trong Docker Compose (cài repo vào `/app` trong container), dùng đường dẫn `/app/<file>` hoặc copy file vào repo trước khi gọi endpoint.
+
+6) Truy vấn (RAG) bằng `/query`
+
+Gửi truy vấn văn bản để lấy các đoạn ngữ cảnh từ Qdrant:
+
+```bash
+curl -X POST http://localhost:8000/query \
+	-H "Content-Type: application/json" \
+	-d '{"query":"What is the purpose of the document?","top_k":5}'
+```
+
+Response trả về các contexts và nguồn tương ứng.
+
+
+
 Ghi chú:
 - Nếu bạn dùng Windows CMD/PowerShell, thay `source` bằng `.venv\\Scripts\\Activate.ps1` hoặc `.
 venv\\Scripts\\activate`.
