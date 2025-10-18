@@ -72,3 +72,28 @@ def load_and_chunk_pdf(path: str) -> List[str]:
     for t in texts:
         chunks.extend(splitter.split_texts(t))
     return chunks
+
+
+def embed_texts(texts: List[str], batch_size: int = 32) -> List[List[float]]:
+    """Encode a list of texts into embedding vectors (lists of floats).
+
+    Uses the module-level `_embedder` (SentenceTransformer). Returns a list
+    where each element is a plain Python list of floats suitable for upsert to Qdrant.
+    """
+    if not texts:
+        return []
+
+    vectors = []
+    # Batch to avoid OOM on large inputs
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i : i + batch_size]
+        emb = _embedder.encode(batch, show_progress_bar=False)
+        # sentence-transformers may return numpy arrays; convert to lists
+        try:
+            for v in emb.tolist():
+                vectors.append(v)
+        except Exception:
+            # fallback if emb is already a list of lists
+            vectors.extend(list(emb))
+
+    return vectors
